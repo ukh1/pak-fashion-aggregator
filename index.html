@@ -1,58 +1,154 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <title>Outfitters Shirts</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pak Fashion Aggregator</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Helvetica:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: sans-serif; }
-    .product-grid {
+    body {
+      margin: 0;
+      font-family: 'Helvetica', sans-serif;
+      background-color: #fff;
+      color: #111;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .filters {
+      padding: 1rem 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .filters select, .filters input[type="text"] {
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 16px;
-      padding: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.5rem;
+      padding: 2rem;
     }
-    .product {
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      padding: 8px;
+
+    .card {
+      border: 1px solid #e5e5e5;
+      border-radius: 4px;
+      overflow: hidden;
       text-align: center;
+      background: #fff;
+      transition: box-shadow 0.2s ease;
     }
-    .product img {
+
+    .card:hover {
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .card img {
       width: 100%;
       height: auto;
-      border-radius: 4px;
+    }
+
+    .card h4 {
+      font-size: 1rem;
+      padding: 0.5rem;
+      font-weight: normal;
+      margin: 0;
+    }
+
+    .card .price {
+      font-weight: bold;
+      margin-bottom: 0.75rem;
     }
   </style>
 </head>
+
 <body>
+  <header>
+    <div class="logo">Pak Fashion Aggregator</div>
+    <div>Inspired by ASOS</div>
+  </header>
 
-<h2 style="text-align:center;">Outfitters Shirts</h2>
-<div class="product-grid" id="products"></div>
+  <section class="filters">
+    <input type="text" placeholder="Search by product name..." oninput="filterProducts()" id="searchInput">
+    <select onchange="filterProducts()" id="brandFilter">
+      <option value="">All Brands</option>
+    </select>
+    <select onchange="filterProducts()" id="categoryFilter">
+      <option value="">All Categories</option>
+    </select>
+  </section>
 
-<script>
-  const AIRTABLE_JSON_URL = "https://airtable.com/appGF7ABeJ9rOLpyM/shrQHyQYOzNQGQid9?format=json";
+  <section class="grid" id="productGrid"></section>
 
-  async function fetchProducts() {
-    const res = await fetch(AIRTABLE_JSON_URL);
-    const data = await res.json();
+  <script>
+    const products = [];
 
-    const container = document.getElementById("products");
-    data.records.forEach(record => {
-      const product = record.fields;
-      const div = document.createElement("div");
-      div.className = "product";
-      div.innerHTML = `
-        <img src="${product['Image URL'][0].url}" alt="${product['Product Name']}" />
-        <h4>${product['Product Name']}</h4>
-        <p>${product['Price']}</p>
-        <a href="${product['Product Page']}" target="_blank">View Product</a>
-      `;
-      container.appendChild(div);
-    });
-  }
+    fetch("products.json")
+      .then(res => res.json())
+      .then(data => {
+        products.push(...data);
+        populateFilters();
+        renderProducts(products);
+      });
 
-  fetchProducts();
-</script>
+    function populateFilters() {
+      const brandSet = new Set(products.map(p => p.Brand));
+      const catSet = new Set(products.map(p => p.Category));
 
+      brandSet.forEach(b => {
+        document.getElementById("brandFilter").innerHTML += `<option value="${b}">${b}</option>`;
+      });
+      catSet.forEach(c => {
+        document.getElementById("categoryFilter").innerHTML += `<option value="${c}">${c}</option>`;
+      });
+    }
+
+    function renderProducts(items) {
+      const grid = document.getElementById("productGrid");
+      grid.innerHTML = items.map(p => `
+        <div class="card">
+          <a href="${p['Product Page']}" target="_blank">
+            <img src="${p['Image URL'][0].url}" alt="${p['Product Name']}" />
+          </a>
+          <h4>${p['Product Name']}</h4>
+          <div class="price">${p['Price']}</div>
+        </div>`).join('');
+    }
+
+    function filterProducts() {
+      const brand = document.getElementById("brandFilter").value.toLowerCase();
+      const category = document.getElementById("categoryFilter").value.toLowerCase();
+      const keyword = document.getElementById("searchInput").value.toLowerCase();
+
+      const filtered = products.filter(p => {
+        return (
+          (brand === "" || p.Brand.toLowerCase() === brand) &&
+          (category === "" || p.Category.toLowerCase() === category) &&
+          (keyword === "" || p['Product Name'].toLowerCase().includes(keyword))
+        );
+      });
+
+      renderProducts(filtered);
+    }
+  </script>
 </body>
+
 </html>
