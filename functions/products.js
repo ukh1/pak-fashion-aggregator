@@ -1,29 +1,23 @@
-export default async (req, res) => {
-  const apiKey = process.env.AIRTABLE_API_KEY;
-  const baseId = process.env.AIRTABLE_BASE_ID;
-  const tableName = 'Products';
+const Airtable = require('airtable');
 
-  const url = `https://api.airtable.com/v0/${baseId}/${tableName}`;
-  const options = {
-    headers: {
-      Authorization: `Bearer ${apiKey}`
-    }
-  };
+exports.handler = async function () {
+  const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID);
 
   try {
-    const response = await fetch(url, options);
-    const data = await response.json();
+    const records = await base('products').select({}).firstPage();
+    const products = records.map(record => ({
+      id: record.id,
+      ...record.fields,
+    }));
 
-    const records = data.records.map(record => record.fields);
-
-    // 🛑 Filter out records like "meta-title", "meta-description"
-    const filtered = records.filter(
-      r => r.Name && !r.Name.toLowerCase().startsWith('meta-')
-    );
-
-    res.status(200).json(filtered);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to fetch data' });
+    return {
+      statusCode: 200,
+      body: JSON.stringify(products),
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: error.message }),
+    };
   }
 };
