@@ -68,26 +68,6 @@
   .catch(err => {
     console.error('❌ Failed to fetch live data', err);
   });
-        const lines = csv.split('\n');
-        const headers = lines[0].split(',');
-
-        lines.slice(1).forEach(line => {
-          const cols = line.split(',');
-          if (cols.length < headers.length) return;
-
-          const product = {
-            name: cols[0],
-            price: cols[1],
-            image: cols[2],
-            category: cols[3],
-            link: cols[4]
-          };
-
-          allProducts.push(product);
-        });
-
-        displayProducts(allProducts);
-      });
 
 function displayProducts(products) {
   productGrid.innerHTML = '';
