@@ -1,2 +1,7 @@
 [functions]
-  directory = "functions"
+  directory = "netlify/functions"
+
+[[redirects]]
+  from = "/api/products.js"
+  to = "/.netlify/functions/products"
+  status = 200
