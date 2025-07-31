@@ -1,32 +1,29 @@
-// functions/products.js
+export default async (req, res) => {
+  const apiKey = process.env.AIRTABLE_API_KEY;
+  const baseId = process.env.AIRTABLE_BASE_ID;
+  const tableName = 'Products';
 
-export default async (req, context) => {
-  const AIRTABLE_TOKEN = process.env.AIRTABLE_TOKEN;
-  const BASE_ID = 'appGF7ABeJ9rOLpyM'; // Replace with your base ID
-  const TABLE_NAME = 'Outfitters'; // Replace with your table name
-
-  const response = await fetch(`https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}`, {
+  const url = `https://api.airtable.com/v0/${baseId}/${tableName}`;
+  const options = {
     headers: {
-      Authorization: `Bearer ${AIRTABLE_TOKEN}`
+      Authorization: `Bearer ${apiKey}`
     }
-  });
+  };
 
-  if (!response.ok) {
-    return new Response(JSON.stringify({ error: 'Failed to fetch Airtable data' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+  try {
+    const response = await fetch(url, options);
+    const data = await response.json();
+
+    const records = data.records.map(record => record.fields);
+
+    // 🛑 Filter out records like "meta-title", "meta-description"
+    const filtered = records.filter(
+      r => r.Name && !r.Name.toLowerCase().startsWith('meta-')
+    );
+
+    res.status(200).json(filtered);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch data' });
   }
-
-  const data = await response.json();
-
-  const products = data.records.map(record => ({
-    id: record.id,
-    ...record.fields
-  }));
-
-  return new Response(JSON.stringify(products), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' }
-  });
 };
