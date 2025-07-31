@@ -1,7 +1,8 @@
-[functions]
-  directory = "netlify/functions"
+[build]
+  functions = "functions"
+  publish = "."
 
 [[redirects]]
-  from = "/api/products.js"
-  to = "/.netlify/functions/products"
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
   status = 200
