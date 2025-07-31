@@ -1,154 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pak Fashion Aggregator</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Helvetica:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
+      font-family: 'Open Sans', sans-serif;
+      background: #fff;
       margin: 0;
-      font-family: 'Helvetica', sans-serif;
-      background-color: #fff;
-      color: #111;
+      padding: 0;
+      color: #222;
     }
-
     header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 2rem;
-      border-bottom: 1px solid #ccc;
+      padding: 20px;
+      border-bottom: 1px solid #eaeaea;
+      text-align: center;
+      font-size: 24px;
+      font-weight: 600;
     }
-
-    .logo {
-      font-size: 1.5rem;
-      font-weight: bold;
-    }
-
-    .filters {
-      padding: 1rem 2rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      border-bottom: 1px solid #ccc;
-    }
-
-    .filters select, .filters input[type="text"] {
-      padding: 0.5rem;
-      font-size: 1rem;
-    }
-
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 1.5rem;
-      padding: 2rem;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      padding: 20px;
     }
-
     .card {
-      border: 1px solid #e5e5e5;
-      border-radius: 4px;
-      overflow: hidden;
-      text-align: center;
-      background: #fff;
-      transition: box-shadow 0.2s ease;
+      border: 1px solid #ddd;
+      padding: 10px;
+      transition: box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
     }
-
     .card:hover {
-      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
     }
-
     .card img {
       width: 100%;
       height: auto;
+      object-fit: cover;
     }
-
-    .card h4 {
-      font-size: 1rem;
-      padding: 0.5rem;
-      font-weight: normal;
-      margin: 0;
+    .card .info {
+      padding: 10px 0;
+      flex-grow: 1;
     }
-
-    .card .price {
-      font-weight: bold;
-      margin-bottom: 0.75rem;
+    .name {
+      font-size: 16px;
+      margin: 0 0 6px;
+      font-weight: 600;
+    }
+    .price {
+      font-size: 14px;
+      color: #555;
+    }
+    .card a {
+      text-decoration: none;
+      color: inherit;
     }
   </style>
 </head>
-
 <body>
-  <header>
-    <div class="logo">Pak Fashion Aggregator</div>
-    <div>Inspired by ASOS</div>
-  </header>
-
-  <section class="filters">
-    <input type="text" placeholder="Search by product name..." oninput="filterProducts()" id="searchInput">
-    <select onchange="filterProducts()" id="brandFilter">
-      <option value="">All Brands</option>
-    </select>
-    <select onchange="filterProducts()" id="categoryFilter">
-      <option value="">All Categories</option>
-    </select>
-  </section>
-
-  <section class="grid" id="productGrid"></section>
+  <header>Pak Fashion Aggregator</header>
+  <div class="grid" id="productGrid"></div>
 
   <script>
-    const products = [];
-
-    fetch("products.json")
-      .then(res => res.json())
-      .then(data => {
-        products.push(...data);
-        populateFilters();
-        renderProducts(products);
-      });
-
-    function populateFilters() {
-      const brandSet = new Set(products.map(p => p.Brand));
-      const catSet = new Set(products.map(p => p.Category));
-
-      brandSet.forEach(b => {
-        document.getElementById("brandFilter").innerHTML += `<option value="${b}">${b}</option>`;
-      });
-      catSet.forEach(c => {
-        document.getElementById("categoryFilter").innerHTML += `<option value="${c}">${c}</option>`;
-      });
-    }
-
-    function renderProducts(items) {
+    async function loadCSV() {
+      const response = await fetch("Grid view.csv");
+      const data = await response.text();
+      const rows = data.split("\n").slice(1); // remove header
       const grid = document.getElementById("productGrid");
-      grid.innerHTML = items.map(p => `
-        <div class="card">
-          <a href="${p['Product Page']}" target="_blank">
-            <img src="${p['Image URL'][0].url}" alt="${p['Product Name']}" />
+
+      rows.forEach(row => {
+        const [name, price, image, page, brand, category, date] = row.split(",");
+        if (!name || !image || !page) return;
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <a href="${page}" target="_blank">
+            <img src="${image}" alt="${name}" />
+            <div class="info">
+              <p class="name">${name}</p>
+              <p class="price">${price}</p>
+            </div>
           </a>
-          <h4>${p['Product Name']}</h4>
-          <div class="price">${p['Price']}</div>
-        </div>`).join('');
-    }
-
-    function filterProducts() {
-      const brand = document.getElementById("brandFilter").value.toLowerCase();
-      const category = document.getElementById("categoryFilter").value.toLowerCase();
-      const keyword = document.getElementById("searchInput").value.toLowerCase();
-
-      const filtered = products.filter(p => {
-        return (
-          (brand === "" || p.Brand.toLowerCase() === brand) &&
-          (category === "" || p.Category.toLowerCase() === category) &&
-          (keyword === "" || p['Product Name'].toLowerCase().includes(keyword))
-        );
+        `;
+        grid.appendChild(card);
       });
-
-      renderProducts(filtered);
     }
+
+    loadCSV();
   </script>
 </body>
-
 </html>
