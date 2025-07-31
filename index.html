@@ -76,20 +76,22 @@
         displayProducts(allProducts);
       });
 
-    function displayProducts(products) {
-      productGrid.innerHTML = '';
-      products.forEach(p => {
-        productGrid.innerHTML += `
-          <a href="${p.link}" target="_blank" class="block hover:shadow-lg rounded overflow-hidden border border-gray-200">
-            <img src="${p.image}" alt="${p.name}" class="w-full h-72 object-cover">
-            <div class="p-2">
-              <h3 class="text-sm font-semibold">${p.name}</h3>
-              <p class="text-sm text-gray-600">${p.price}</p>
-            </div>
-          </a>
-        `;
-      });
-    }
+function displayProducts(products) {
+  productGrid.innerHTML = '';
+  products.forEach((p, idx) => {
+    const productJSON = JSON.stringify(p).replace(/"/g, '&quot;'); // escape quotes for HTML
+    productGrid.innerHTML += `
+      <a href="product.html" onclick='localStorage.setItem("selectedProduct", "${productJSON}")' 
+         class="block hover:shadow-lg rounded overflow-hidden border border-gray-200">
+        <img src="${p.image}" alt="${p.name}" class="w-full h-72 object-cover">
+        <div class="p-2">
+          <h3 class="text-sm font-semibold">${p.name}</h3>
+          <p class="text-sm text-gray-600">${p.price}</p>
+        </div>
+      </a>
+    `;
+  });
+}
 
     searchBar.addEventListener('input', e => {
       const keyword = e.target.value.toLowerCase();
