@@ -6,16 +6,13 @@ exports.handler = async (event, context) => {
   try {
     const records = await base('products').select({}).firstPage();
 
-    const products = records.map(record => {
-  const fields = record.fields;
-  return {
-    id: record.id,
-    name: fields["Product Name"] || '',
-    price: fields["Price"] || 0,
-    image: fields["Image URL"]?.[0]?.url || '',
-    link: fields["Product Page"] || '',
-  };
-});
+    const products = records.map(record => ({
+      id: record.id,
+      name: record.fields['Product Name'] || 'N/A',
+      price: record.fields['Price'] || 'N/A',
+      image: record.fields['Image URL'] || '',
+      link: record.fields['Product Page'] || '#',
+    }));
 
     return {
       statusCode: 200,
