@@ -1,45 +1,30 @@
-<!-- product.html -->
-<!DOCTYPE html>
-<html lang="en">
+<!-- v1.3: Product detail routing fix using slugs -->
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Product Detail</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
+<!-- Shared product data (static JSON for now) -->
+<script type="module">
+  import products from './data/products.js'; // Will include parsed CSV data
 
-<body class="bg-white text-gray-900 font-[Inter]">
-  <header class="shadow p-4 sticky top-0 z-50 bg-white">
-    <div class="max-w-7xl mx-auto flex justify-between items-center">
-      <a href="index.html" class="text-2xl font-bold">Pak Fashion</a>
-    </div>
-  </header>
+  const slugify = str => str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
-  <main class="max-w-4xl mx-auto px-4 mt-8">
-    <div id="productDetail" class="flex flex-col md:flex-row gap-8 items-start">
-      <!-- Product details will appear here -->
-    </div>
-  </main>
+  const pathParts = window.location.pathname.split('/');
+  const slug = pathParts[pathParts.length - 1];
 
-  <script>
-    const productData = JSON.parse(localStorage.getItem("selectedProduct"));
-    const container = document.getElementById("productDetail");
+  const product = products.find(p => slugify(p.Name) === slug);
 
-    if (productData) {
-      container.innerHTML = `
-        <img src="${productData.image}" alt="${productData.name}" class="w-full md:w-1/2 h-auto object-cover rounded border border-gray-200">
-        <div class="flex-1">
-          <h1 class="text-2xl font-bold mb-2">${productData.name}</h1>
-          <p class="text-lg text-gray-700 mb-4">${productData.price}</p>
-          <a href="${productData.link}" target="_blank" class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800">Buy from brand</a>
-        </div>
-      `;
-    } else {
-      container.innerHTML = "<p>Product not found.</p>";
-    }
-  </script>
-</body>
+  const productContainer = document.getElementById('product-detail');
 
-</html>
+  if (product) {
+    productContainer.innerHTML = `
+      <h1>${product.Name}</h1>
+      <img src="${product.Image}" alt="${product.Name}" style="width: 300px;">
+      <p><strong>Price:</strong> ${product.Price}</p>
+      <p><strong>Category:</strong> ${product.Category}</p>
+      <p><a href="${product.Link}" target="_blank">View on Brand Site</a></p>
+    `;
+  } else {
+    productContainer.innerHTML = '<p>Product not found.</p>';
+  }
+</script>
+
+<!-- HTML element to mount product -->
+<div id="product-detail"></div>
