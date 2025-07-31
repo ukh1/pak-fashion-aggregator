@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>browse fits</title>
+  <title>Browse Fits</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -12,13 +12,9 @@
       font-family: 'Poppins', sans-serif;
     }
 
-    .product-card {
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
     .product-card:hover {
-      transform: translateY(-4px) scale(1.02);
-      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+      transform: scale(1.03);
+      transition: transform 0.2s ease-in-out;
     }
   </style>
 </head>
@@ -26,7 +22,7 @@
 <body class="bg-white text-gray-900">
   <header class="shadow p-4 sticky top-0 z-50 bg-white">
     <div class="max-w-7xl mx-auto flex justify-between items-center">
-      <h1 class="text-2xl font-bold tracking-wide">browse fits</h1>
+      <h1 class="text-2xl font-bold tracking-tight">Browse Fits</h1>
       <input type="text" id="searchBar" placeholder="Search for clothing..."
         class="border p-2 w-full max-w-md rounded shadow-inner">
     </div>
@@ -43,11 +39,11 @@
 
   <main class="max-w-7xl mx-auto px-4 mt-4">
     <div class="flex flex-wrap gap-2 mb-4">
-      <button class="category-tag bg-gray-200 px-3 py-1 rounded hover:bg-gray-300" data-category="T-Shirt">T-Shirts</button>
-      <button class="category-tag bg-gray-200 px-3 py-1 rounded hover:bg-gray-300" data-category="Shirt">Shirts</button>
-      <button class="category-tag bg-gray-200 px-3 py-1 rounded hover:bg-gray-300" data-category="Polo">Polos</button>
-      <button class="category-tag bg-gray-200 px-3 py-1 rounded hover:bg-gray-300" data-category="Denim">Denim</button>
-      <button class="category-tag bg-gray-200 px-3 py-1 rounded hover:bg-gray-300" data-category="Pants">Pants</button>
+      <button class="category-tag" data-category="T-Shirt">T-Shirts</button>
+      <button class="category-tag" data-category="Shirt">Shirts</button>
+      <button class="category-tag" data-category="Polo">Polos</button>
+      <button class="category-tag" data-category="Denim">Denim</button>
+      <button class="category-tag" data-category="Pants">Pants</button>
     </div>
 
     <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
@@ -56,7 +52,7 @@
   </main>
 
   <footer class="bg-gray-100 mt-12 py-8 text-center text-sm text-gray-600">
-    <p>&copy; 2025 browse fits. All rights reserved.</p>
+    <p>&copy; 2025 Browse Fits. All rights reserved.</p>
     <p><a href="about.html" class="underline">About</a> | <a href="contact.html" class="underline">Contact Us</a></p>
   </footer>
 
@@ -69,13 +65,16 @@
     fetch('/api/products')
       .then(res => res.json())
       .then(products => {
-        allProducts = products.map(p => ({
-          name: p.Name,
-          price: p.Price,
-          image: p.Image,
-          category: p.Category,
-          link: p.Link
-        }));
+        allProducts = products.map(p => {
+          const f = p.fields || {};
+          return {
+            name: f.Name || "Unnamed",
+            price: f.Price || "N/A",
+            image: f.Image || "https://via.placeholder.com/300x400?text=No+Image",
+            category: f.Category || "Misc",
+            link: f.Link || "#"
+          };
+        });
         displayProducts(allProducts);
       })
       .catch(err => {
@@ -88,10 +87,11 @@
         const productJSON = JSON.stringify(p).replace(/"/g, '&quot;');
         productGrid.innerHTML += `
           <a href="product.html" onclick='localStorage.setItem("selectedProduct", "${productJSON}")'
-            class="block product-card rounded overflow-hidden border border-gray-200 bg-white">
+             class="product-card block hover:shadow-lg rounded overflow-hidden border border-gray-200 bg-white"
+             target="_blank" rel="noopener noreferrer">
             <img src="${p.image}" alt="${p.name}" class="w-full h-72 object-cover">
             <div class="p-2">
-              <h3 class="text-sm font-semibold truncate">${p.name}</h3>
+              <h3 class="text-sm font-semibold">${p.name}</h3>
               <p class="text-sm text-gray-600">${p.price}</p>
             </div>
           </a>
