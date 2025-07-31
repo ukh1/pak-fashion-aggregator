@@ -16,5 +16,8 @@
     "url": "https://github.com/ukh1/pak-fashion-aggregator/issues"
   },
   "homepage": "https://github.com/ukh1/pak-fashion-aggregator#readme",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "airtable": "^0.12.2"
+  }
 }
