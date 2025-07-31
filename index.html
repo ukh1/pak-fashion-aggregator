@@ -52,9 +52,22 @@
     const categoryTags = document.querySelectorAll('.category-tag');
     let allProducts = [];
 
-    fetch('Grid view.csv')
-      .then(res => res.text())
-      .then(csv => {
+  fetch('/api/products')
+  .then(res => res.json())
+  .then(products => {
+    allProducts = products.map(p => ({
+      name: p.Name,
+      price: p.Price,
+      image: p.Image,
+      category: p.Category,
+      link: p.Link
+    }));
+
+    displayProducts(allProducts);
+  })
+  .catch(err => {
+    console.error('❌ Failed to fetch live data', err);
+  });
         const lines = csv.split('\n');
         const headers = lines[0].split(',');
 
