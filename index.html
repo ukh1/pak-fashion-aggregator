@@ -1,183 +1,248 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Browse Fits</title>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet"/>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #fff;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Browse Fits</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@400;700&display=swap');
 
-    header {
-      background: black;
-      color: white;
-      padding: 1rem;
-      text-align: center;
-      font-family: 'Archivo Black', sans-serif;
-      font-size: 2rem;
-    }
+      body {
+        font-family: 'Helvetica Neue', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
 
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1rem;
-      margin: 1rem;
-    }
+      header {
+        background-color: #000;
+        color: white;
+        padding: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+      }
 
-    .controls input, .controls select {
-      padding: 0.5rem;
-      font-size: 1rem;
-    }
+      header h1 {
+        margin: 0;
+        font-size: 2rem;
+      }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 1rem;
-      padding: 1rem;
-    }
+      nav {
+        display: flex;
+        gap: 1rem;
+        padding: 0.5rem 1rem;
+        background-color: #fff;
+        border-top: 1px solid #eee;
+        border-bottom: 1px solid #eee;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
 
-    .card {
-      background: #f9f9f9;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      padding: 0.5rem;
-      text-align: center;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
+      nav a {
+        color: #333;
+        text-decoration: none;
+        padding: 0.5rem;
+      }
 
-    .card:hover {
-      transform: scale(1.03);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    }
+      nav a:hover {
+        text-decoration: underline;
+      }
 
-    .card img {
-      width: 100%;
-      height: 240px;
-      object-fit: cover;
-      border-radius: 8px;
-    }
+      #controls {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin: 1.5rem;
+      }
 
-    .card h2 {
-      font-size: 1.1rem;
-      margin: 0.5rem 0 0.2rem;
-    }
+      input, select {
+        padding: 0.75rem;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
 
-    .card p {
-      margin: 0;
-      font-weight: bold;
-      color: #333;
-    }
-  </style>
-</head>
-<body>
-  <header>Browse Fits</header>
+      #products {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1.5rem;
+        padding: 2rem;
+      }
 
-  <div class="controls">
-    <input type="text" id="searchInput" placeholder="Search for items..." />
-    <select id="categoryFilter"><option value="">All Categories</option></select>
-    <select id="brandFilter"><option value="">All Brands</option></select>
-    <select id="sortBy">
-      <option value="">Sort By</option>
-      <option value="priceAsc">Price: Low to High</option>
-      <option value="priceDesc">Price: High to Low</option>
-      <option value="nameAsc">Name: A–Z</option>
-      <option value="nameDesc">Name: Z–A</option>
-    </select>
-  </div>
+      .card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        padding: 1rem;
+        text-align: center;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
 
-  <div class="grid" id="productGrid"></div>
+      .card:hover {
+        transform: scale(1.03);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+      }
 
-  <script>
-    let allProducts = [];
+      .card img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        object-fit: cover;
+      }
 
-    async function fetchProducts() {
-      try {
+      .card h2 {
+        font-size: 1.1rem;
+        margin: 0.75rem 0 0.25rem;
+      }
+
+      .card p {
+        margin: 0.25rem 0;
+        font-size: 0.95rem;
+      }
+
+      .pagination {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .pagination button {
+        background: black;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        margin: 0 0.25rem;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+
+      .pagination button:disabled {
+        background: #888;
+        cursor: not-allowed;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Browse Fits</h1>
+      <input type="text" id="searchInput" placeholder="Search for products..." />
+    </header>
+
+    <nav>
+      <select id="categoryFilter">
+        <option value="">All Categories</option>
+      </select>
+      <select id="sortSelect">
+        <option value="">Sort By</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="name-asc">Name: A–Z</option>
+        <option value="name-desc">Name: Z–A</option>
+      </select>
+    </nav>
+
+    <main>
+      <div id="products"></div>
+      <div class="pagination">
+        <button id="prevPage">Prev</button>
+        <button id="nextPage">Next</button>
+      </div>
+    </main>
+
+    <script>
+      let productsData = [];
+      let currentPage = 1;
+      const productsPerPage = 12;
+
+      async function fetchProducts() {
         const res = await fetch('/.netlify/functions/products');
         const data = await res.json();
-        allProducts = data.filter(p => p.name && p.image && p.link);
+        productsData = data;
+        renderProducts();
         populateFilters();
-        renderProducts(allProducts);
-      } catch (e) {
-        console.error("❌ Failed to fetch products:", e);
-        document.getElementById('productGrid').innerHTML = "<p>Error loading products</p>";
       }
-    }
 
-    function populateFilters() {
-      const categorySet = new Set();
-      const brandSet = new Set();
-      allProducts.forEach(p => {
-        if (p.Category) categorySet.add(p.Category);
-        if (p.Brand) brandSet.add(p.Brand);
+      function renderProducts() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const selectedCategory = document.getElementById('categoryFilter').value;
+        const sortBy = document.getElementById('sortSelect').value;
+
+        let filtered = productsData.filter(product => {
+          const nameMatch = product["Product Name"].toLowerCase().includes(searchTerm);
+          const categoryMatch = !selectedCategory || product["Category"] === selectedCategory;
+          return nameMatch && categoryMatch;
+        });
+
+        // Sort
+        filtered.sort((a, b) => {
+          switch (sortBy) {
+            case 'price-asc': return (parseFloat(a.Price) || 0) - (parseFloat(b.Price) || 0);
+            case 'price-desc': return (parseFloat(b.Price) || 0) - (parseFloat(a.Price) || 0);
+            case 'name-asc': return a["Product Name"].localeCompare(b["Product Name"]);
+            case 'name-desc': return b["Product Name"].localeCompare(a["Product Name"]);
+            default: return 0;
+          }
+        });
+
+        const startIndex = (currentPage - 1) * productsPerPage;
+        const paginated = filtered.slice(startIndex, startIndex + productsPerPage);
+
+        const container = document.getElementById('products');
+        container.innerHTML = '';
+        paginated.forEach(product => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <a href="${product["Product Page"]}" target="_blank" rel="noopener noreferrer">
+              <img src="${product["Image URL"]}" alt="${product["Product Name"]}" />
+              <h2>${product["Product Name"]}</h2>
+              <p>Rs ${product["Price"] || 'N/A'}</p>
+              <p style="font-size: 0.8rem; color: #888;">${product["Brand"]}</p>
+            </a>
+          `;
+          container.appendChild(card);
+        });
+
+        document.getElementById('prevPage').disabled = currentPage === 1;
+        document.getElementById('nextPage').disabled = startIndex + productsPerPage >= filtered.length;
+      }
+
+      function populateFilters() {
+        const categories = Array.from(new Set(productsData.map(p => p["Category"]))).filter(Boolean);
+        const categorySelect = document.getElementById('categoryFilter');
+        categories.forEach(category => {
+          const opt = document.createElement('option');
+          opt.value = category;
+          opt.textContent = category;
+          categorySelect.appendChild(opt);
+        });
+      }
+
+      document.getElementById('searchInput').addEventListener('input', () => {
+        currentPage = 1;
+        renderProducts();
       });
 
-      const catFilter = document.getElementById("categoryFilter");
-      [...categorySet].sort().forEach(cat => {
-        const opt = document.createElement("option");
-        opt.value = cat;
-        opt.textContent = cat;
-        catFilter.appendChild(opt);
+      document.getElementById('categoryFilter').addEventListener('change', () => {
+        currentPage = 1;
+        renderProducts();
       });
 
-      const brandFilter = document.getElementById("brandFilter");
-      [...brandSet].sort().forEach(brand => {
-        const opt = document.createElement("option");
-        opt.value = brand;
-        opt.textContent = brand;
-        brandFilter.appendChild(opt);
-      });
-    }
+      document.getElementById('sortSelect').addEventListener('change', renderProducts);
 
-    function renderProducts(products) {
-      const grid = document.getElementById("productGrid");
-      grid.innerHTML = "";
-      products.forEach(product => {
-        const card = document.createElement("a");
-        card.className = "card";
-        card.href = product.link;
-        card.target = "_blank";
-        card.rel = "noopener noreferrer";
-        card.innerHTML = `
-          <img src="${product.image}" alt="${product.name}" />
-          <h2>${product.name}</h2>
-          <p>Rs ${product.price}</p>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    function applyFilters() {
-      const search = document.getElementById("searchInput").value.toLowerCase();
-      const selectedCategory = document.getElementById("categoryFilter").value;
-      const selectedBrand = document.getElementById("brandFilter").value;
-      const sortBy = document.getElementById("sortBy").value;
-
-      let filtered = allProducts.filter(p => {
-        return (!search || p.name.toLowerCase().includes(search)) &&
-               (!selectedCategory || p.Category === selectedCategory) &&
-               (!selectedBrand || p.Brand === selectedBrand);
+      document.getElementById('prevPage').addEventListener('click', () => {
+        if (currentPage > 1) currentPage--;
+        renderProducts();
       });
 
-      if (sortBy === "priceAsc") filtered.sort((a, b) => a.price - b.price);
-      if (sortBy === "priceDesc") filtered.sort((a, b) => b.price - a.price);
-      if (sortBy === "nameAsc") filtered.sort((a, b) => a.name.localeCompare(b.name));
-      if (sortBy === "nameDesc") filtered.sort((a, b) => b.name.localeCompare(a.name));
+      document.getElementById('nextPage').addEventListener('click', () => {
+        currentPage++;
+        renderProducts();
+      });
 
-      renderProducts(filtered);
-    }
-
-    document.getElementById("searchInput").addEventListener("input", applyFilters);
-    document.getElementById("categoryFilter").addEventListener("change", applyFilters);
-    document.getElementById("brandFilter").addEventListener("change", applyFilters);
-    document.getElementById("sortBy").addEventListener("change", applyFilters);
-
-    fetchProducts();
-  </script>
-</body>
+      fetchProducts();
+    </script>
+  </body>
 </html>
