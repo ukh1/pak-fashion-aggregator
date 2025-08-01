@@ -1,242 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>allbrands</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     body {
       margin: 0;
       font-family: 'Montserrat', sans-serif;
       background-color: #f9f9f9;
+      color: #333;
     }
-
     header {
-      background-color: #fff;
+      background-color: #ffffff;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 1rem 2rem;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      border-bottom: 1px solid #eee;
     }
-
     .logo {
-      font-size: 1.8rem;
       font-weight: 700;
+      font-size: 1.8rem;
     }
-
-    .logo span:first-child {
-      color: #000;
+    .logo span {
+      color: #111;
     }
-
-    .logo span:last-child {
-      color: #666;
-    }
-
-    .nav {
-      display: flex;
-      gap: 1rem;
-    }
-
-    .hero {
-      background: url('https://images.unsplash.com/photo-1521334884684-d80222895322?auto=format&fit=crop&w=1600&q=80') center/cover;
-      color: white;
-      text-align: center;
-      padding: 5rem 1rem;
-    }
-
-    .hero h1 {
-      font-size: 3rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      padding: 1rem 2rem;
-      background-color: #fff;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
-    }
-
-    .filters input,
-    .filters select {
-      padding: 0.5rem;
-      font-size: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-
-    .products {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
-      padding: 2rem;
-    }
-
-    .product-card {
-      background: #fff;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-      transition: transform 0.2s;
-    }
-
-    .product-card:hover {
-      transform: translateY(-5px);
-    }
-
-    .product-card img {
-      width: 100%;
-      height: 300px;
-      object-fit: cover;
-    }
-
-    .product-info {
-      padding: 1rem;
-    }
-
-    .product-info h3,
-    .product-info p {
-      margin: 0.2rem 0;
+    nav a {
+      margin-left: 1rem;
       text-decoration: none;
       color: #333;
+      font-weight: 500;
     }
-
-    .brand-badge {
+    main {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+    .hero {
+      background: url('https://images.unsplash.com/photo-1542060748-10c28b62716f') center/cover no-repeat;
+      height: 300px;
       display: flex;
       align-items: center;
-      margin-top: 0.5rem;
+      justify-content: center;
+      border-radius: 12px;
+      color: white;
+      font-size: 2rem;
+      font-weight: 700;
+      text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
+      margin-bottom: 2rem;
     }
-
-    .brand-badge img {
-      width: 20px;
-      height: 20px;
-      margin-right: 5px;
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+    .product {
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      padding: 1rem;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      text-decoration: none;
+    }
+    .product:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+    .product img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+    .product h2, .product p {
+      margin: 0;
+      font-weight: 500;
+      color: #333;
+      text-decoration: none;
+    }
+    .outfitters-tag {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      opacity: 0.75;
+    }
+    .outfitters-tag img {
+      width: 16px;
+      height: 16px;
+    }
+    footer {
+      margin-top: 3rem;
+      padding: 2rem;
+      background: #f1f1f1;
+      text-align: center;
+      font-size: 0.9rem;
     }
   </style>
 </head>
-
 <body>
   <header>
-    <div class="logo"><span>all</span><span>brands</span></div>
-    <nav class="nav">
-      <div>Men</div>
-      <div>Women</div>
-      <div>Accessories</div>
-      <div>All Products</div>
+    <div class="logo"><span>all</span>brands</div>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
     </nav>
   </header>
-
-  <section class="hero">
-    <h1>All your favourite fits in one place</h1>
-  </section>
-
-  <section class="filters">
-    <input type="text" id="search" placeholder="Search products...">
-    <select id="categoryFilter">
-      <option value="">All Categories</option>
-    </select>
-    <select id="sort">
-      <option value="default">Sort by</option>
-      <option value="lowToHigh">Price: Low to High</option>
-      <option value="highToLow">Price: High to Low</option>
-    </select>
-  </section>
-
-  <section class="products" id="productGrid">
-    <!-- Products will be inserted here -->
-  </section>
-
+  <main>
+    <div class="hero">All your favourite fits in one place</div>
+    <div class="products" id="products"></div>
+    <section id="about" style="margin-top: 3rem;">
+      <h2>About</h2>
+      <p>allbrands is your one-stop destination for browsing apparel from all your favorite local and international fashion brands. Built to simplify shopping, powered by Airtable.</p>
+    </section>
+    <section id="contact" style="margin-top: 3rem;">
+      <h2>Contact</h2>
+      <p>For inquiries, reach us at <a href="mailto:info@allbrands.pk">info@allbrands.pk</a>.</p>
+    </section>
+  </main>
+  <footer>
+    &copy; 2025 allbrands. All rights reserved.
+  </footer>
   <script>
-    const airtableApiKey = 'keyXXXXXXXXXXXXXX'; // Replace with your Airtable API Key
-    const baseId = 'appGF7ABeJ9rOLpyM';
+    const airtableApiKey = 'YOUR_API_KEY'; // Replace this with your actual Airtable API key
+    const airtableBaseId = 'appGF7ABeJ9rOLpyM';
     const tableName = 'tblg8B8YMeXi2wHLj';
     const viewName = 'Grid view';
 
     async function fetchProducts() {
-      const response = await fetch(`https://api.airtable.com/v0/${baseId}/${tableName}?view=${viewName}`, {
-        headers: {
-          Authorization: `Bearer ${airtableApiKey}`
-        }
-      });
-      const data = await response.json();
-      return data.records;
-    }
+      const url = `https://api.airtable.com/v0/${airtableBaseId}/${tableName}?view=${viewName}`;
+      try {
+        const response = await fetch(url, {
+          headers: {
+            Authorization: `Bearer ${airtableApiKey}`,
+          },
+        });
+        const data = await response.json();
 
-    function displayProducts(products) {
-      const grid = document.getElementById('productGrid');
-      grid.innerHTML = '';
-
-      const searchQuery = document.getElementById('search').value.toLowerCase();
-      const selectedCategory = document.getElementById('categoryFilter').value;
-      const sortOption = document.getElementById('sort').value;
-
-      let filtered = products.filter(p => {
-        const name = p.fields['Product Name']?.toLowerCase() || '';
-        const category = p.fields['Category'] || '';
-        return name.includes(searchQuery) && (!selectedCategory || category === selectedCategory);
-      });
-
-      if (sortOption === 'lowToHigh') {
-        filtered.sort((a, b) => (parseFloat(a.fields['Price']) || 0) - (parseFloat(b.fields['Price']) || 0));
-      } else if (sortOption === 'highToLow') {
-        filtered.sort((a, b) => (parseFloat(b.fields['Price']) || 0) - (parseFloat(a.fields['Price']) || 0));
+        return data.records
+          .filter(record => record.fields['Image URL'] && record.fields['Product Name'])
+          .map(record => ({
+            name: record.fields['Product Name'],
+            price: record.fields['Price'] || 'N/A',
+            image: record.fields['Image URL'],
+            link: record.fields['Product Page'] || '#',
+            brand: record.fields['Brand'] || 'Outfitters',
+          }));
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        return [];
       }
+    }
 
-      filtered.forEach(product => {
-        const name = product.fields['Product Name'] || 'N/A';
-        const price = product.fields['Price'] ? `PKR ${product.fields['Price']}` : 'N/A';
-        const imageUrl = product.fields['Image URL'] || 'https://via.placeholder.com/300';
-        const link = product.fields['Product Page'] || '#';
-        const brand = product.fields['Brand'] || 'Outfitters';
+    function renderProducts(products) {
+      const container = document.getElementById('products');
+      container.innerHTML = '';
 
-        const card = document.createElement('div');
-        card.className = 'product-card';
-        card.innerHTML = `
-          <a href="${link}" target="_blank">
-            <img src="${imageUrl}" alt="${name}">
-            <div class="product-info">
-              <h3>${name}</h3>
-              <p>${price}</p>
-              <div class="brand-badge">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Outfitters_logo.png" alt="${brand}" />
-                <span>${brand}</span>
-              </div>
-            </div>
-          </a>
+      products.forEach(product => {
+        const productCard = document.createElement('a');
+        productCard.className = 'product';
+        productCard.href = product.link;
+        productCard.target = '_blank';
+        productCard.rel = 'noopener noreferrer';
+
+        productCard.innerHTML = `
+          <img src="${product.image}" alt="${product.name}" />
+          <h2>${product.name}</h2>
+          <p>Rs ${product.price}</p>
+          <div class="outfitters-tag">
+            <img src="https://seeklogo.com/images/O/outfitters-logo-046FC3CB28-seeklogo.com.png" alt="Outfitters Logo" />
+            <span>${product.brand}</span>
+          </div>
         `;
-        grid.appendChild(card);
+        container.appendChild(productCard);
       });
     }
 
-    function populateCategoryFilter(products) {
-      const categories = new Set();
-      products.forEach(p => {
-        const cat = p.fields['Category'];
-        if (cat) categories.add(cat);
-      });
-      const filter = document.getElementById('categoryFilter');
-      categories.forEach(cat => {
-        const opt = document.createElement('option');
-        opt.value = cat;
-        opt.textContent = cat;
-        filter.appendChild(opt);
-      });
-    }
-
-    document.addEventListener('DOMContentLoaded', async () => {
-      const products = await fetchProducts();
-      populateCategoryFilter(products);
-      displayProducts(products);
-
-      document.getElementById('search').addEventListener('input', () => displayProducts(products));
-      document.getElementById('categoryFilter').addEventListener('change', () => displayProducts(products));
-      document.getElementById('sort').addEventListener('change', () => displayProducts(products));
-    });
+    fetchProducts().then(renderProducts);
   </script>
 </body>
-
 </html>
