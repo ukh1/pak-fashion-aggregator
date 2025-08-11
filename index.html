@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,17 +8,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body { margin: 0; font-family: 'Montserrat', sans-serif; background-color: #f9f9f9; }
-    header { background-color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 1rem 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    header { background-color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 1rem 2rem; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); }
     .logo { font-size: 1.8rem; font-weight: 700; }
     .logo span:first-child { color: #000; }
     .logo span:last-child { color: #666; }
     .nav { display: flex; gap: 1rem; }
     .hero { background: url('https://images.unsplash.com/photo-1542060748-10c28b62716f') center/cover; color: white; text-align: center; padding: 5rem 1rem; }
     .hero h1 { font-size: 3rem; margin-bottom: 0.5rem; }
-    .filters { display: flex; flex-wrap: wrap; gap: 1rem; padding: 1rem 2rem; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.03); }
-    .filters input,.filters select { padding: 0.5rem; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px; }
+    .filters { display: flex; flex-wrap: wrap; gap: 1rem; padding: 1rem 2rem; background-color: #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03); }
+    .filters input, .filters select { padding: 0.5rem; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px; }
     .products { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; padding: 2rem; }
-    .product-card { background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: transform 0.2s; }
+    .product-card { background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); transition: transform 0.2s; }
     .product-card:hover { transform: translateY(-5px); }
     .product-card img { width: 100%; height: 300px; object-fit: cover; }
     .product-info { padding: 1rem; }
@@ -26,11 +27,15 @@
     .brand-badge img { width: 20px; height: 20px; margin-right: 5px; }
   </style>
 </head>
+
 <body>
   <header>
     <div class="logo"><span>all</span><span>brands</span></div>
     <nav class="nav">
-      <div>Men</div><div>Women</div><div>Accessories</div><div>All Products</div>
+      <div>Men</div>
+      <div>Women</div>
+      <div>Accessories</div>
+      <div>All Products</div>
     </nav>
   </header>
 
@@ -50,34 +55,27 @@
     </select>
   </section>
 
-  <section class="products" id="productGrid"></section>
+  <section class="products" id="productGrid">
+    <!-- Products will be inserted here -->
+  </section>
 
   <!-- Supabase JS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // --- Supabase credentials (anon key is intended for client-side) ---
+    // --- Supabase creds (anon key is safe for client-side with RLS) ---
     const SUPABASE_URL = 'https://ptqlqzbrlaxepezowfgp.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB0cWxxemJybGF4ZXBlem93ZmdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQxNDg0MzEsImV4cCI6MjA2OTcyNDQzMX0.5cDGQKd1scsbICzRs7ITJuw24v7ds_tk--c6lF4-XOM';
 
-    // Table name in your Supabase database
-    const TABLE = 'products'; // change if your table is named differently
+    // Set this to your actual table name
+    const TABLE = 'products';
 
-    // Create client
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Helper: read a field with fallbacks (snake_case or spaced labels)
-    const F = (row, ...keys) => {
-      for (const k of keys) {
-        if (row[k] !== undefined && row[k] !== null) return row[k];
-      }
-      return '';
-    };
-
     async function fetchProducts() {
-      // Select only the columns you actually need (good practice with RLS)
+      // Select only the columns we need
       const { data, error } = await supabase
         .from(TABLE)
-        .select('id, product_name, price, image_url, product_page, brand, category, "Product Name", "Price", "Image URL", "Product Page", "Brand", "Category"');
+        .select('sku, brand, title, category, colour, size, gender, price, image, url');
 
       if (error) {
         console.error('Error fetching products:', error);
@@ -95,24 +93,23 @@
       const sortOption = document.getElementById('sort').value;
 
       let filtered = products.filter(p => {
-        const name = (F(p, 'product_name', 'Product Name') + '').toLowerCase();
-        const category = F(p, 'category', 'Category') + '';
+        const name = (p.title || '').toLowerCase();
+        const category = p.category || '';
         return name.includes(searchQuery) && (!selectedCategory || category === selectedCategory);
       });
 
       if (sortOption === 'lowToHigh') {
-        filtered.sort((a, b) => (parseFloat(F(a, 'price', 'Price')) || 0) - (parseFloat(F(b, 'price', 'Price')) || 0));
+        filtered.sort((a, b) => (parseFloat(a.price) || 0) - (parseFloat(b.price) || 0));
       } else if (sortOption === 'highToLow') {
-        filtered.sort((a, b) => (parseFloat(F(b, 'price', 'Price')) || 0) - (parseFloat(F(a, 'price', 'Price')) || 0));
+        filtered.sort((a, b) => (parseFloat(b.price) || 0) - (parseFloat(a.price) || 0));
       }
 
-      filtered.forEach(p => {
-        const name = F(p, 'product_name', 'Product Name') || 'N/A';
-        const priceVal = F(p, 'price', 'Price');
-        const price = priceVal ? `PKR ${priceVal}` : 'N/A';
-        const imageUrl = F(p, 'image_url', 'Image URL') || 'https://via.placeholder.com/300';
-        const link = F(p, 'product_page', 'Product Page') || '#';
-        const brand = F(p, 'brand', 'Brand') || 'Unknown';
+      filtered.forEach(product => {
+        const name = product.title || 'N/A';
+        const price = product.price ? `PKR ${product.price}` : 'N/A';
+        const imageUrl = product.image || 'https://via.placeholder.com/300';
+        const link = product.url || '#';
+        const brand = product.brand || 'Unknown';
 
         const card = document.createElement('div');
         card.className = 'product-card';
@@ -136,8 +133,7 @@
     function populateCategoryFilter(products) {
       const categories = new Set();
       products.forEach(p => {
-        const cat = F(p, 'category', 'Category');
-        if (cat) categories.add(cat);
+        if (p.category) categories.add(p.category);
       });
       const filter = document.getElementById('categoryFilter');
       categories.forEach(cat => {
